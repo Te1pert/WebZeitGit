@@ -1,0 +1,25 @@
+﻿@page
+@model WebZeit2.AdministratorModel
+@{
+    ViewData["Title"] = "Administrator";
+    Layout = HttpContext.Session.GetString("LayoutPage");
+}
+@using Microsoft.AspNetCore.Http;
+@if (HttpContext.Session.GetInt32("IsLoggedIn") == 1)
+{
+
+
+    <h1>Administrator</h1>
+    <div class="container">
+        <main role="main" class="pb-3">
+            <form method="post">
+                <Button asp-page-handler="MaAnlegen">Mitarbeiter anlegen</Button>
+            </form>
+        </main>
+    </div>
+}
+else
+{
+    Response.Redirect(@"/");
+}
+

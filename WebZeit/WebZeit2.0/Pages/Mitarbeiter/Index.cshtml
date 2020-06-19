@@ -1,0 +1,62 @@
+﻿@page
+@model WebZeit2.Pages.Mitarbeiter.IndexModel
+@using Microsoft.AspNetCore.Http;
+@using System.Data;
+<h1>Mitarbeiter</h1>
+@{
+
+    Layout = HttpContext.Session.GetString("LayoutPage");
+}
+
+
+@if (HttpContext.Session.GetInt32("IsLoggedIn") == 1)
+{
+    <form method="post">
+        <div style="float:right">
+            <label for="input_search">Mitarbeiter suchen: </label>
+            <input asp-for="@Model.InputSearch" id="input_search" type="text"/> 
+            <button asp-page-handler="MaSearch" type="submit">Suchen</button>
+        </div>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th align="center">@Model.dtMitarbeiters.Columns[0].ColumnName</th>
+                    <th align="center">@Model.dtMitarbeiters.Columns[1].ColumnName</th>
+                    <th align="center">@Model.dtMitarbeiters.Columns[2].ColumnName</th>
+                    <th align="center">@Model.dtMitarbeiters.Columns[3].ColumnName</th>
+                    <th align="center">@Model.dtMitarbeiters.Columns[5].ColumnName</th>
+                    <th align="center"></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (DataRow row in Model.dtMitarbeiters.Rows)
+                {
+                    <tr>
+                        <td align="left">@row["Vorname"]</td>
+                        <td align="left">@row["Nachname"]</td>
+                        <td align="left">@row["Abteilungsname"]</td>
+                        <td align="left">@row["Telefonnummer"]</td>
+                        <td align="left">
+                            @if (row["AnwesendStatus"].ToString() == "1")
+                            {<span>&#10004;</span>}
+                            else if (row["AnwesendStatus"].ToString() == "2")
+                            {<span style="color:red">&#x2717;</span>}
+
+                        </td>
+                        <td align="left">
+                            <button class="button-table" asp-page-handler="Stamm" asp-route-PId="@Convert.ToInt32(row["idPersonal"].ToString())">
+                                Stammdaten betrachten
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </form>
+}
+
+else
+{
+    Response.Redirect(@"/");
+}

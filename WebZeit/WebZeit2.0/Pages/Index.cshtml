@@ -1,0 +1,60 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+    Layout = "~/Pages/Shared/_LayoutLogin.cshtml";
+}
+
+
+    <div class="text-center">
+        <h1 class="display-4">Willkommen!</h1>
+
+
+        <form method="post" style="display:inline-table;">
+            <table>
+                <tr>
+                    <td style="float:left" class="me-table-td-Login">
+                        Kurzzeichen: 
+                    </td>
+                    <td class="me-table-td-Login">
+                        <input asp-for="Login.Kurzzeichen" id="Tb_Kz" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="float:left" class="me-table-td-Login">
+                        Passwort:
+                    </td>
+                    <td class="me-table-td-Login">
+                        <input asp-for="Login.Passwort" id="Tb_Pw" type="password" />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="me-table-td-Login">
+                        <button type="submit">Einloggen!</button>
+                    </td>
+                    <td>
+
+                    </td>
+                </tr>
+
+            </table>
+            @*<ul class="ul-form">
+                <li>
+                    <label for="Tb_Kz">Kurzzeichen: </label>
+                    <input asp-for="Login.Kurzzeichen" id="Tb_Kz" type="text" />
+                </li>
+                <li>
+                    <label for="Tb_Pw">Passwort: </label>
+                    <input asp-for="Login.Passwort" id="Tb_Pw" type="password" />
+                </li>
+                <li>
+                    <button type="submit">Anmelden!</button>
+                </li>
+            </ul>*@
+        </form>
+        @if (Model.IsError)
+        {
+            <p style="color:red;font-weight:bold;">@Model.ErrorMessage</p>
+        }
+
+    </div>

@@ -1,0 +1,132 @@
+﻿@page "/_Sites/MaStammdaten"
+@model WebZeit2.indexModel
+@using Microsoft.AspNetCore.Http;
+
+@{
+    ViewData["Title"] = "index";
+    Layout = HttpContext.Session.GetString("LayoutPage");
+}
+
+
+@if (HttpContext.Session.GetInt32("IsLoggedIn") == 1)
+{
+    @using System.Data;
+
+    <!DOCTYPE html>
+    <html lang="de-de">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>@ViewData["Title"] - WebZeit</title>
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="~/css/site.css" />
+    </head>
+
+    <body>
+
+
+        <h1 style="margin-top:10px">Stammdaten für @Model.stammdaten.Vorname @Model.stammdaten.Nachname</h1>
+        <br />
+        <br />
+        <br />
+
+
+        <div class="align-middle">
+
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Personalnummer</th>
+                        <th>Kurzzeichen</th>
+                        <th>Vorname</th>
+                        <th>Nachname</th>
+                        <th>Abteilung</th>
+                        <th>Telefonnummer</th>
+                        <th>AnwesendStatus</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@Model.stammdaten.PId</td>
+                        <td>@Model.stammdaten.Kurzzeichen</td>
+                        <td>@Model.stammdaten.Vorname</td>
+                        <td>@Model.stammdaten.Nachname</td>
+                        <td>@Model.stammdaten.Abteilung</td>
+                        <td>@Model.stammdaten.Telefonnummer</td>
+                        <td>@Model.stammdaten.Anwesend</td>
+                    </tr>
+                </tbody>
+
+            </table>
+        </div>
+
+        <br />
+        <br />
+        <br />
+        @if (HttpContext.Session.GetInt32("IsAdmin") == 1)
+        {
+
+        <h1 style="margin-top:10px">Zeitnachweise für @Model.stammdaten.Vorname @Model.stammdaten.Nachname</h1>
+
+        <div style="overflow-y:scroll;max-height:300px">
+            @foreach (DataRow row in Model.dtZeiten.DefaultView.ToTable(true, "Datum").Rows)
+            {
+
+                var date = Convert.ToDateTime(row["Datum"]);
+
+                <button type="button" class="me-collapsible" style="text-align:center;padding:0px;">@date.ToString("dd/MM/yyyy")</button>
+                <div class="me-zeit-content">
+                    <table style="width:100%;">
+                        <thead>
+                            <tr>
+                                <th>Kommen</th>
+                                <th>Gehen</th>
+                                <th>TagesIst</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (DataRow row1 in Model.dtZeiten.Select("Datum = " + "'" + row["Datum"].ToString() + "'"))
+                            {
+                                TimeSpan time = TimeSpan.FromSeconds(Convert.ToInt32(row1["TagesIst"].ToString()));
+                                <tr>
+                                    <td>@row1["Kommen"]</td>
+                                    <td>@row1["Gehen"]</td>
+                                    <td>@time.ToString(@"hh\:mm\:ss")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+        }
+    </body>
+
+</html>
+
+    <script>
+        var coll = document.getElementsByClassName("me-collapsible");
+        var i;
+
+        for (i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function () {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
+                }
+            });
+        }
+    </script>
+
+}
+else
+{
+    Response.Redirect(@"/");
+}
+
+
+

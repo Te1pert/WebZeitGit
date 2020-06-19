@@ -1,0 +1,82 @@
+﻿@page "/Administrator/MaAnlegen/index"
+@model WebZeit2.MaAnlegenModel
+
+@using Microsoft.AspNetCore.Http;
+
+@{
+    ViewData["Title"] = "index";
+    Layout = HttpContext.Session.GetString("LayoutPage");
+}
+@using WebZeit2.Models
+@if (HttpContext.Session.GetInt32("IsLoggedIn") == 1)
+{
+
+
+    <h1>Mitarbeiter anlegen</h1>
+    <div>
+        <form method="post">
+            <table>
+                <tr>
+                    <td align="right">
+                        <label for="Tb_Vorname">Vorname: </label>
+                        <input class="MaInputs" id="Tb_Vorname" asp-for="NeuMitarbeiter.Vorname" type="text" />
+                    </td>
+                    <td align="right">
+                        <label for="Tb_Nachname">Nachname: </label>
+                        <input class="MaInputs" id="Tb_Nachname" asp-for="NeuMitarbeiter.Nachname" type="text" />
+                    </td>
+                    <td align="right">
+                        <label for="Tb_Kurzzeichen">Kurzzeichen: </label>
+                        <input class="MaInputs" id="Tb_Kurzzeichen" asp-for="NeuMitarbeiter.Kurzzeichen" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left">
+                        <label for="Cb_Abteilung">Abteilung: </label>
+                        <select asp-for="NeuMitarbeiter.IdAbteilung" class="MaInputs" id="Cb_Abteilung">
+                            <option selected value="0"></option>
+                            @foreach (Abteilung abt in MainController.Abteilungen)
+                            {
+                                <option value="@abt.IdAbteilung">@abt.NameAbteilung</option>
+                            }
+                        </select>
+                    </td>
+                    <td align="right">
+                        <label for="Tb_Telefonnummer">Telefonnummer: </label>
+                        <input class="MaInputs" id="Tb_Telefonnummer" asp-for="NeuMitarbeiter.Telefonnummer" type="text" />
+                    </td>
+                    <td align="left">
+                        <label for="ChB_IsAdmin">IstAdmin: </label>
+                        <input class="MaInputs" id="ChB_IsAdmin" asp-for="NeuMitarbeiter.IstAdmin" type="checkbox" />
+                    </td>
+
+                </tr>
+                <tr>
+                    <td align="right">
+                        <label for="PwB_Passwort">Passwort: </label>
+                        <input class="MaInputs" id="PwB_Passwort" asp-for="NeuMitarbeiter.Passwort" type="password" />
+                    </td>
+                    <td align="right">
+                        <label for="PwB_PasswortConfirm">Passwort bestätigen: </label>
+                        <input class="MaInputs" id="PwB_PasswortConfirm" asp-for="NeuMitarbeiter.PasswortConfirm" type="password" />
+                    </td>
+                    <td>
+                        <button type="submit" asp-page-handler="Submit">Hinzufügen!</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <div>
+        @if (Model.IsError)
+        {
+            <p style="color:red">@Model.ErrorMessage()</p>
+        }
+
+    </div>
+}
+else
+{
+    Response.Redirect(@"/");
+}
+

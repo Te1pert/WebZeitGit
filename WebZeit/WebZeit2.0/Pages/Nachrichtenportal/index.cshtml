@@ -1,0 +1,140 @@
+﻿@page
+@model WebZeit2.Pages.Nachrichtenportal.indexModel
+@using Microsoft.AspNetCore.Http;
+@using System.Data;
+@{
+    Layout = HttpContext.Session.GetString("LayoutPage");
+}
+@if (HttpContext.Session.GetInt32("IsLoggedIn") == 1)
+{
+    <h1>Nachrichtenportal</h1>
+    <div class="me-container">
+        <div class="me-navbar">
+            <form method="post">
+                <ul style="list-style-type:none;margin-top:5px;margin-left:-37px">
+
+                    <li>
+                        <hr class="me-div-nav-hr" />
+                        <button class="nav-link me-div-button" asp-page-handler="Received" asp-route-Pkz="@HttpContext.Session.GetString("Kurzzeichen")">Gesendet</button>
+                    </li>
+                    <li>
+                        <hr class="me-div-nav-hr" />
+                        <button class="nav-link me-div-button" asp-page-handler="Send" asp-route-Pkz="@HttpContext.Session.GetString("Kurzzeichen")">Empfangen</button>
+                    </li>
+                    <li>
+                        <hr class="me-div-nav-hr" />
+                        <button class="nav-link me-div-button" asp-page-handler="NewMessage" asp-route-Pkz="@HttpContext.Session.GetString("Kurzzeichen")">Neue Nachricht</button>
+                    </li>
+
+                </ul>
+            </form>
+        </div>
+        <div class="me-content">
+            
+            @if (Model.IsDataLoaded)
+            {
+                <table width="100%" class="table table-hover me-table">
+                    <thead class="me-thead">
+                        <tr class="me-tr">
+
+                            <th align="center">@Model.dtNachrichten.Columns[0].ColumnName</th>
+                            <th align="center">@Model.dtNachrichten.Columns[1].ColumnName</th>
+                            <th align="center">@Model.dtNachrichten.Columns[2].ColumnName</th>
+                            <th></th>
+
+                        </tr>
+                    </thead>
+                    <tbody class="me-tbody">
+                        @foreach (DataRow row in Model.dtNachrichten.Rows)
+                        {
+                            <tr class="me-tr">
+
+
+                                <td class="me-td" align="left">@row[0].ToString()</td>
+                                <td class="me-td" align="left">@row[1].ToString()</td>
+                                <td class="me-td" align="left">@row[2].ToString()</td>
+                                <td class="me-td" align="left">
+                                    <form method="post">
+                                        <button asp-page-handler="ViewMessage" 
+                                                asp-route-Absender="@row["AbsenderKz"].ToString()"
+                                                asp-route-Empfaenger="@row["EmpfaengerKz"].ToString()"
+                                                asp-route-Betreff="@row["Betreff"].ToString()"
+                                                asp-route-Text="@row["NachrichtText"].ToString()"
+                                                class="button-table">Ansehen</button>
+                                    </form>
+
+                                </td>
+
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            @if (Model.IsFormLoaded)
+            {
+                <form method="post">
+                    <div class="me-div-MessageForm">
+
+                        <div class="me-div-MessageForm-Empfaenger">
+                            <label style="font-weight:bold;" for="SelEmpf">Empfänger:</label>
+                            <select asp-for="@Model.Message.Empfaenger" id="SelEmpf" style="width:100%">
+                                <option value="0"></option>
+                                @foreach (DataRow row in Model.dtUsers.Rows)
+                                {
+
+                                    <option value="@row[0].ToString()">@row[0].ToString()</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="me-div-MessageForm-Betreff">
+                            <label style="font-weight:bold;" for="TextBetr">Betreff:</label>
+                            <input asp-for="@Model.Message.Betreff" id="TextBetr" style="width:100%" type="text" />
+                        </div>
+                        <div class="me-div-MessageForm-Text">
+                            <textarea asp-for="@Model.Message.Text" style="width:100%;height:100%;resize:none">  </textarea>
+                        </div>
+                        <div class="me-div-MessageForm-ButtonSend">
+                            <button asp-page-handler="SendMessage" asp-route-PKz="@HttpContext.Session.GetString("Kurzzeichen")" style="float:right">Senden</button>
+                        </div>
+                    </div>
+                </form>
+            }
+            @if (Model.IsMessageLoaded)
+            {
+                <div class="me-div-MessageViewForm">
+
+                    <div class="me-div-MessageViewForm-Absender">
+                        <label style="font-weight:bold;">Absender: </label>
+                        <label>@Model.nachricht.Absender</label>
+                        <hr />    
+                    </div>
+                    
+                    <div class="me-div-MessageViewForm-Empfaenger">
+                        <label style="font-weight:bold;">Empfänger: </label>
+                        <label>@Model.nachricht.Empfaenger</label>
+                        <hr />
+                    </div>
+                    
+                    <div class="me-div-MessageViewForm-Betreff">
+                        <label style="font-weight:bold;">Betreff: </label>
+                        <label>@Model.nachricht.Betreff</label>
+                        <hr />
+                    </div>
+                    <div class="me-div-MessageViewForm-Text">
+                        <textarea readonly style="width:100%;height:100%;resize:none">@Model.nachricht.Text</textarea>
+                    </div>
+                    
+                </div>
+            }
+
+
+
+        </div>
+    </div>
+}
+else
+{
+    Response.Redirect(@"/");
+}
+
